@@ -41,7 +41,7 @@ The water delivery system consists of a magnet ventile, a relais and the DAQ. Th
 
 The dimensions of the basis framework fits into a larger variety of clipper boxes. This is the "basic" solution. If you are running experiments, which needs a higher level of silence while they are in a not-so-quite environment, please consider the use of a proper sound attenuation box. 
 
-#Software
+# Software
 
 At the moment the Touchscreen Chamber is running with Python 2.7. Since not everyone is using Python2, we suggest the following to create a dedicated environment:
 
@@ -52,6 +52,12 @@ For the installation one more package is needed. First of all for the control of
 
 To prepare your experiments, you need to start piezo calibration.py first. This script reads the signal from the piezo element. According to the specific model of your piezo element, a daily calibration is probably needed. The threshold for a touch at the lick detection needs to be adapted in following experimental scripts.
 
-The pretraining consists of two scripts. For Phase0.py, the screen can be deactivated. In this phase, the green led light is activated, when a reward is available. After the mouse collected the reward, the green light turns off and turns on again after a predefined timeout. Phase1.py 
+The pretraining consists of two scripts. For autoreward.py, the screen can be deactivated. In this phase, the green led light is activated, when a reward is available. After the mouse collected the reward, the green light turns off and turns on again after a predefined timeout. After 2-3 sessions, the mouse should have collected at least one reward per minute and can proceed to the next stage. The next step is the touch training (touchtraining.py), where the animal learns to touch the screen in order to get a reward. Again, it turns out to be benefitial, when the mice are able to complete one trial per minute on two consecutive sessions. 
+
+Congratulations! Your mouse is ready for an operant conditioning experiment. We propose different orientation discrimination tasks (staircase, visual discrimination and parallel visual discrimination learning). Using the built-in GUI of Psychopy, it is also possible to create a large variety of different tasks and use it in the touchscreen chamber. The specific functions can be taken from the orientation discrimination tasks.
+
+# Future
+
+Stay tuned for the Python 3 upgrade and Arduino support in the future.  
 
 
