@@ -1,12 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Aug  2 09:16:20 2022
-
-@author: Chris
-"""
-
-# -*- coding: utf-8 -*-
-"""
 Created on Tue Dec  7 19:10:32 2021
 
 @author: Chris Wiesbrock
@@ -50,15 +43,3 @@ plt.plot(perf_90, color='lightcoral')
 sns.despine()
 plt.xlabel('Session')
 plt.ylabel('Performance [%]')
-
-
-    
-    
-
-
-
-
-
-
-
-
