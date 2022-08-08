@@ -12,12 +12,15 @@ import glob
 import pandas as pd
 import seaborn as sns
 from statsmodels.stats.proportion import proportions_ztest
+import os
 
 plt.rcParams["font.family"] = "Arial"
 plt.rcParams['axes.spines.right'] = False
 plt.rcParams['axes.spines.top'] = False
 
-path=r'H:/Backup C/Users/Chris/Desktop/Mac Up/Daten sortiert/Horizontal rewarded\293/*.csv'
+
+mouse_id='1218'
+path=os.path.abspath(os.getcwd()+'/'+str(mouse_id)+'/*.csv')
 mice_list=glob.glob(path)
 
 trials=np.zeros((len(mice_list),1))
