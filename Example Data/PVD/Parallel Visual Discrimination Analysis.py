@@ -17,14 +17,15 @@ import matplotlib.pylab as plt
 import glob
 import pandas as pd
 import seaborn as sns
+import os
 
 plt.rcParams["font.family"] = "Arial"
 plt.rcParams['axes.spines.right'] = False
 plt.rcParams['axes.spines.top'] = False
 
 
-mouse_id='all'
-path=r'H:\Backup C\Users\Chris\Desktop\Mac Up\Daten sortiert\Pal\1218/*.csv'
+mouse_id='1218'
+path=os.path.abspath(os.getcwd()+'/'+str(mouse_id)+'/*.csv')
 mice_list=glob.glob(path)
 mice_list=np.sort(mice_list)
 names=((len(mice_list),1))
