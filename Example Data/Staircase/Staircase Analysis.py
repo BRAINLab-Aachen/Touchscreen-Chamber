@@ -13,8 +13,15 @@ import scipy.stats as stats
 import glob
 from scipy.signal import argrelextrema
 import pandas as pd
+import os
 
-path=r'H:\Backup C\Users\Chris\Desktop\Mac Up\Daten sortiert\Staircase\293/*.csv'
+plt.rcParams["font.family"] = "Arial"
+plt.rcParams['axes.spines.right'] = False
+plt.rcParams['axes.spines.top'] = False
+
+
+mouse_id='293'
+path=os.path.abspath(os.getcwd()+'/'+str(mouse_id)+'/*.csv')
 mice_list=glob.glob(path)
 mice_list=np.sort(mice_list)
 threshold=np.zeros((len(mice_list),1))
@@ -43,12 +50,3 @@ plt.figure(dpi=300)
 plt.plot(threshold)
 plt.ylabel('Orientation threshold [degree]')
 plt.xlabel('Session')
-
-
-
-
-
-
-
-
-
