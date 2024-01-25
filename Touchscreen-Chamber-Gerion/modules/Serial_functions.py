@@ -67,7 +67,7 @@ def open_serial(COM_port='COM3', baudrate=9600):
 
 
 def _send_byte_alone(serial_obj, header_byte):
-    serial_obj.write(bytes(chr(header_byte), 'ascii'))
+    serial_obj.write(bytes([header_byte]))
 #
 
 
