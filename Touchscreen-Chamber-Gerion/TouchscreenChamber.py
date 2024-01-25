@@ -25,13 +25,14 @@ from modules.functions import calibrate_lick_sensor, phase_0_lick_detection, lic
 class TouchscreenChamber:
     def __init__(self, protocol, expInfo):
         # Inputs
+        self.expInfo = expInfo
         self.experimenter_name = expInfo["experimenter_name"]
         self.animal_id = expInfo["animal_id"]
 
         # unpack protocol. We could also use it from the protocol directly, not sure yet what I like better.
         # self.experimental_task = experimental_task
         # self.Protocol_name = protocol.Protocol_name
-        # self.ITI = protocol.ITI  # in sec
+        # self.protocol.ITI = protocol.ITI  # in sec
         self.protocol = protocol
 
         self.save_folder = path.join(getcwd(), "data")
@@ -44,6 +45,10 @@ class TouchscreenChamber:
         # general setting:
         # ToDo: We should make this a general config for the entire setup instead even above the level of protocols!
         self.valve_duration = 100  # in ms
+
+
+        # Session variables
+        self.trialClock = core.Clock()
     #
 
     def start_session(self):
@@ -115,7 +120,6 @@ class TouchscreenChamber:
         # 2-3 settings individual conditions
         stop_session = False
         if self.protocol.Phase0:
-            trialclock = core.Clock()
             # it looks like there is always a general trial loop, with 3 distinct phases:
             #   1. stimulus presentation
             #   2. response detection and reward handling
@@ -136,7 +140,7 @@ class TouchscreenChamber:
                 # lick-detection
                 led_on(serial_obj=self.serial_obj)
                 phase_0_lick_detection(serial_obj=self.serial_obj)
-                self.times = float(trialclock.getTime())  # get the response time (OS time).
+                self.times = float(self.trialClock.getTime())  # get the response time (OS time).
                 led_off(serial_obj=self.serial_obj)
 
                 # user feedback
@@ -160,7 +164,7 @@ class TouchscreenChamber:
                 # 5 sec delay before the LED is turned on again and the mouse is rewarded for the next licks
                 # as far as I can tell this is specific to the Phase0, but we could make this an ITI variable that is
                 # set to 0 sec if desired.
-                time.sleep(self.ITI)
+                time.sleep(self.protocol.ITI)
             #
         #
     #
@@ -215,6 +219,8 @@ class TouchscreenChamber:
         #   1. stimulus presentation
         #   2. response detection and reward handling
         #   3. saving trial data
+
+        n = 0
         for thisTrial in self.trials:
             # ## Initialize the next trial ## #
             stop_session = False
@@ -406,19 +412,19 @@ class TouchscreenChamber:
 #         self.present_stimuli = False
 #
 #         # the inter trial interval, added at the end of a given trial
-#         self.ITI = 5
+#         self.protocol.ITI = 5
 #     #
 #
 #     def load_phase0(self):
 #         self.Protocol_name = "Phase0"
-#         self.ITI = 5
+#         self.protocol.ITI = 5
 #         self.Phase0 = True
 #         self.present_stimuli = False
 #     #
 #
 #     def load_phase1(self):
 #         self.Protocol_name = "Phase1"
-#         self.ITI = 5
+#         self.protocol.ITI = 5
 #         self.Phase0 = False
 #         self.present_stimuli = True
 #     #

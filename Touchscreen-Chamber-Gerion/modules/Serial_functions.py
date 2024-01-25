@@ -31,6 +31,7 @@ def search_for_microcontroller_by_name(name):
 
 def read_module_name(serial_obj):
     serial_obj.read_all()  # flush Serial
+    sleep(0.2)  # for some reason we need a 200ms delay for the ESP32
 
     # Ask the COM device to identify itself
     _send_byte_alone(serial_obj=serial_obj, header_byte=MODULE_INFO)

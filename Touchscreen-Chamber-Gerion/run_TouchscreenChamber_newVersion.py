@@ -54,7 +54,8 @@ if __name__ == "__main__":
     # a dict() would be there most flexible, but I would like to define all the arguments that are available/necessary
     # protocol = {"ITI": 5}
     current_protocol = Protocol()
-    current_protocol.load_phase0()
+    # current_protocol.load_phase0()
+    current_protocol.load_phase1()
 
     # I could either construct the protocol on the fly (e.g.: class) or save it down completely e.g.: npy/yaml ...
     # This depends on how I decide to handle the stimulus (long list of target-/distractor-paths or just folder)

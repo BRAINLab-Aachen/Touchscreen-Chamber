@@ -5,10 +5,7 @@
 **/.idea
 **/venv
 **/backup
-**/__pycache__/*
 **/__pycache__
 
-*.pyc
-*.csv
 **/*.pyc
 **/*.csv
