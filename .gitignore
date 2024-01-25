@@ -1,0 +1,5 @@
+# Ignore files from Pycharm
+/shelf/
+/workspace.xml
+**/*.idea
+**/*venv

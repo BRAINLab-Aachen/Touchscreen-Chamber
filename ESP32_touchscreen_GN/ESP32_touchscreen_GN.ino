@@ -18,8 +18,8 @@ LickDetection* lick_ptr = &lick;
 // Experiment //////////////////////////////////////
 ////////////////////////////////////////////////////
 // PINs to control Setup
-#define PIN_VALVE 12 // Water valve
-#define LED_PIN 14
+#define PIN_VALVE 12 // Water valve connected to an optocoupler
+#define LED_PIN 14 // LED
 
 SerialSend RespondedSerialObject;
 TimedDigitalPulse VALVE;
@@ -27,6 +27,9 @@ TimedDigitalPulse VALVE;
 ////////////////////////////////////////////////////
 // USB Serial Communication ////////////////////////
 ////////////////////////////////////////////////////
+#define FirmwareVersion "0001" // Version Nr. returned upon request
+#define moduleName "HomecageTouchscreenESP32" // Module name used to identify desired Serial device
+
 // Byte codes for serial communication
 // inputs
 #define ADJUST_TOUCHLEVEL 75 // identifier to re-adjust threshold for touch sensors. Will sample over 1 second of data to infer mean/std of measurements.
@@ -36,9 +39,10 @@ TimedDigitalPulse VALVE;
 #define LED_OFF 102
 #define WAIT_FOR_LICK_REWARDED 103
 #define WAIT_FOR_LICK_NOT_REWARDED 104
+#define MODULE_INFO 255  // returns module information
 
-#define GOT_BYTE 14 // positive handshake for bpod commands
-#define DID_ABORT 15 // negative handshake for bpod commands
+#define GOT_BYTE 14 // positive handshake for Serial commands
+#define DID_ABORT 15 // negative handshake for Serial commands
 
 // Serial COM variables
 unsigned long serialClocker = millis();
@@ -56,8 +60,6 @@ void setup() {
   Serial.begin(9600);
 
   pinMode(LED_PIN, OUTPUT);
-//  pinMode(PIN_VALVE, OUTPUT);
-
   VALVE.configure(PIN_VALVE, open_duration);
 
   RespondedSerialObject.configure(FLUSH_VALVE);
@@ -71,6 +73,8 @@ void loop() {
   RespondedSerialObject.update();
 } // end of void loop
 
+
+// Functions:
 void ReadSerialCommunication() {
   // Serial Communication over USB
   // Main purpose is to start a new trial
@@ -84,6 +88,8 @@ void ReadSerialCommunication() {
     if (midRead) {
       if (FSMheader == FLUSH_VALVE) {
         if (Serial.available() > 1) {
+          // I have to call FLUSH_VALVE once at the beginning of the session to set the desired Valve open duration from
+          // the calibration. This is not necessarily intuitive, for readability I might want to make those two separate commands.
           unsigned long open_duration = readSerialChar(Serial.read());
           Serial.write(GOT_BYTE); midRead = 0;
           VALVE.change_duration(open_duration);
@@ -113,12 +119,11 @@ void ReadSerialCommunication() {
       else if (FSMheader == WAIT_FOR_LICK_REWARDED) {
         if (Serial.available() > 1) {
           unsigned long duration = readSerialChar(Serial.read());
-//          unsigned long open_duration = readSerialChar(Serial.read());
           Serial.write(GOT_BYTE); midRead = 0;
-//          VALVE.change_duration(open_duration);
-          
+
           lickClocker = millis();
           while (millis() - lickClocker < duration) {
+            // Monitor for Licks. Note this is blocking! It hasn't been an issue, as the Microcontroller doesn't have anything else to do right now but rethink this if it ever changes.
             lick_ptr->ReadTouchSensors();
   
             if (lick_ptr->spoutTouch) {
@@ -136,8 +141,8 @@ void ReadSerialCommunication() {
       }
       else if (FSMheader == WAIT_FOR_LICK_NOT_REWARDED) {
         if (Serial.available() > 1) {
+          // There isn't really a need to send a duration here as well. Consider removing unless this makes is simpler from the PC side
           unsigned long duration = readSerialChar(Serial.read());
-//          unsigned long open_duration = readSerialChar(Serial.read());
           Serial.write(GOT_BYTE); midRead = 0;
   
           lickClocker = millis();
@@ -156,7 +161,11 @@ void ReadSerialCommunication() {
           Serial.write(DID_ABORT); midRead = 0;
         }
       }
-  
+      else if (FSMheader == MODULE_INFO) { // return module information
+        returnModuleInfo();
+        midRead = 0;
+      }
+
       
   
       else if (FSMheader == GOT_BYTE){
@@ -227,4 +236,12 @@ float readSerialChar(byte currentRead){
     }
   }
   return currentVar;
+}
+
+void returnModuleInfo() {
+  Serial.write(65); // Acknowledge
+  Serial.write(FirmwareVersion); // 4-byte firmware version
+  Serial.write(sizeof(moduleName)-1); // Length of module name
+  Serial.print(moduleName); // Module name
+  Serial.write(0); // 1 if more info follows, 0 if not
 }

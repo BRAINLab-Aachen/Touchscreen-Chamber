@@ -7,35 +7,35 @@ If you publish work using this script pl
 ease cite the relevant PsychoPy publications
       Peirce, JW (2007) PsychoPy - Psycho
 """
-from __future__ import division  # so that 1/3=0.333 instead of 1/3=0
 from psychopy import visual, core, data, event, logging, sound, gui
 from psychopy.constants import *  # things like STARTED, FINISHED
 import os  # handy system and path functions
 
 import sys  # to get file system encoding
 import time
-from modules.Serial_functions import open_serial, send_data_until_confirmation
 from modules.functions import calibrate_lick_sensor, lick_detection, led_on, led_off, give_reward
+from modules.Serial_functions import search_for_microcontroller_by_name
+
 
 n_trials = 500
-valve_duration = 70  # in ms
+
+# ToDo: We should make this a general config for the entire setup instead of having it in each script!
+valve_duration = 100  # in ms
 
 # Ensure that relative paths start from the same directory as this script
-# _thisDir = os.path.dirname(os.path.abspath(__file__)).decode(sys.getfilesystemencoding())
 _thisDir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(_thisDir)
-timepoint=0
-n=0
+timepoint = 0
+n = 0
 
 # start serial
 test_mode = False
 if not test_mode:
-    serial_obj = open_serial(COM_port='COM11', baudrate=9600)
-    # ADJUST_TOUCHLEVEL = 75
-    # send_data_until_confirmation(serial_obj, header_byte=ADJUST_TOUCHLEVEL, data=[3])
+    serial_obj = search_for_microcontroller_by_name("HomecageTouchscreenESP32")
     calibrate_lick_sensor(serial_obj)
     print('ready')
 
+    # This line is necessary as it sets the desired valve duration for the setup!
     give_reward(serial_obj, valve_duration=valve_duration)
 #
 
@@ -55,11 +55,11 @@ filename = _thisDir + os.sep + u'data/%s_%s_%s' % (expInfo['participant'], expNa
 
 # An ExperimentHandler isn't essential but helps with data saving
 thisExp = data.ExperimentHandler(name=expName, version='',
-    extraInfo=expInfo, runtimeInfo=None,
-    originPath=None,
-    savePickle=True, saveWideText=True,
-    dataFileName=filename)
-#save a log file for detail verbose info
+                                 extraInfo=expInfo, runtimeInfo=None,
+                                 originPath=None,
+                                 savePickle=True, saveWideText=True,
+                                 dataFileName=filename)
+# save a log file for detail verbose info
 logFile = logging.LogFile(filename+'.log', level=logging.EXP)
 logging.console.setLevel(logging.WARNING)  # this outputs to the screen, not a file
 
@@ -77,17 +77,17 @@ expInfo['frameRate']=win.getActualFrameRate()
 if expInfo['frameRate'] != None:
     frameDur = 1.0/round(expInfo['frameRate'])
 else:
-    frameDur = 1.0/60.0 # couldn't get a reliable measure so guess
+    frameDur = 1.0/60.0  # couldn't get a reliable measure so guess
 #
 
 # Initialize components for Routine "trial"
 trialClock = core.Clock()
 ISI = core.StaticPeriod(win=win, screenHz=expInfo['frameRate'], name='ISI')
 grating = visual.GratingStim(win=win, name='grating',
-    tex=u'sin', mask=None,
-    ori=0, pos=[0, 0], size=[2, 2], sf=3, phase=0.0,
-    color=[1,1,1], colorSpace='rgb', opacity=1,
-    texRes=128, interpolate=True, depth=-1.0)
+                             tex=u'sin', mask=None,
+                             ori=0, pos=[0, 0], size=[2, 2], sf=3, phase=0.0,
+                             color=[1, 1, 1], colorSpace='rgb', opacity=1,
+                             texRes=128, interpolate=True, depth=-1.0)
 mouse = event.Mouse(win=win)
 x, y = [None, None]
 
@@ -97,16 +97,16 @@ routineTimer = core.CountdownTimer()  # to track time remaining of each (non-sli
 
 # set up handler to look after randomisation of conditions etc
 trials = data.TrialHandler(nReps=n_trials, method='random',
-    extraInfo=expInfo, originPath=-1,
-    trialList=[None],
-    seed=None, name='trials')
+                           extraInfo=expInfo, originPath=-1,
+                           trialList=[None],
+                           seed=None, name='trials')
 thisExp.addLoop(trials)  # add the loop to the experiment
 thisTrial = trials.trialList[0]  # so we can initialise stimuli with some values
 # abbreviate parameter names if possible (e.g. rgb=thisTrial.rgb)
 touch_delay = 0
 lick_delay = 0
 
-if thisTrial != None:
+if thisTrial is not None:
     for paramName in thisTrial.keys():
         exec(paramName + '= thisTrial.' + paramName)
 
@@ -115,7 +115,7 @@ for thisTrial in trials:
 
     currentLoop = trials
     # abbreviate parameter names if possible (e.g. rgb = thisTrial.rgb)
-    if thisTrial != None:
+    if thisTrial is not None:
         for paramName in thisTrial.keys():
             exec(paramName + '= thisTrial.' + paramName)
     
@@ -147,27 +147,26 @@ for thisTrial in trials:
         # update/draw components on each frame
         
         # *grating* updates
-        if t >= 0.0 and grating.status == NOT_STARTED and info_mouse==0:
+        if t >= 0.0 and grating.status == NOT_STARTED and info_mouse == 0:
             grating.setAutoDraw(True)
             # keep track of start time/frame for later
             grating.tStart = t  # underestimates by a little under one frame
             grating.frameNStart = frameN  # exact frame index
             
-        if grating.status==STARTED and info_mouse!=0:
+        if grating.status == STARTED and info_mouse != 0:
             sound_2 = sound.Sound(value='c', secs=0.2, octave=4, stereo=True, volume=1.0, loops=0,
                                   sampleRate=44100, hamming=True, name='', autoLog=True)
             sound_2.play()
 
             touch_delay = trialClock.getTime()
-            #grating.setAutoDraw(False)
             if not test_mode:
                 led_on(serial_obj)
-                stop_session = lick_detection(win, serial_obj, valve_duration=valve_duration)
+                stop_session = lick_detection(win, serial_obj)
                 led_off(serial_obj)
             #
             lick_delay = trialClock.getTime()
-            timepoint=t
-            n=n+1
+            timepoint = t
+            n = n+1
             print(n)
             continueRoutine = False
 
@@ -189,8 +188,8 @@ for thisTrial in trials:
             ISI.tStart = t  # underestimates by a little under one frame
             ISI.frameNStart = frameN  # exact frame index
             ISI.start(0.5)
-        elif ISI.status == STARTED: #one frame should pass before updating params and completing
-            ISI.complete() #finish the static period
+        elif ISI.status == STARTED:  #one frame should pass before updating params and completing
+            ISI.complete()  #finish the static period
         
         # check for quit (the Esc key)
         if stop_session or endExpNow or event.getKeys(keyList=["escape"]):
@@ -239,22 +238,23 @@ for thisTrial in trials:
     #
 #
 
-# completed 30 repeats of 'trials'
+
+try:
+    # The try is just in case, because we really want to save the data!
+    win.close()
+except:
+    pass
+#
 
 # these shouldn't be strictly necessary (should auto-save)
-win.close()
 thisExp.saveAsWideText(filename+'.csv')
 thisExp.saveAsPickle(filename)
 logging.flush()
-# make sure everything is closed down
-thisExp.abort() # or data files will save again on exit
-# win.close()
-# while True:
-#     if event.getKeys(keyList=["escape"]):
-#         break
-#     #
-# #
 
-# time.sleep(20.)
+# make sure everything is closed down
+thisExp.abort()  # or data files will save again on exit
+
+# This blocks the Program for user feedback.
+# CAREFUL! The program needs to be closed by pressing the OK button! Otherwise data might not be saved properly
 dlg = gui.DlgFromDict(dictionary={'press OK': 'press OK'}, title='Quit?')
 core.quit()

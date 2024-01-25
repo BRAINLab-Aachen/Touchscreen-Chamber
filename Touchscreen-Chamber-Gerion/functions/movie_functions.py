@@ -8,9 +8,10 @@ from os import path
 import sys
 import os
 
-# ffmpeg_path = r'C:\Users\Public\Documents\FFMpeg'
+# FFMPEG is expected in this location:
 ffmpeg_path = r'C:\FFMpeg'
 
+# This is an overwrite in case the user is not an admin that can add this permanently to the environmental variables
 sys.path.append(path.join(ffmpeg_path, 'bin'))
 sys.path.append(path.join(ffmpeg_path, 'bin', 'ffmpeg.exe'))
 
