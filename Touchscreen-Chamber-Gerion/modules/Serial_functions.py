@@ -25,7 +25,7 @@ def search_for_microcontroller_by_name(name):
         #
     #
 
-    raise Exception(name + ' Teensy NOT FOUND!')
+    raise Exception(name + ' Microcontroller NOT FOUND!')
 #
 
 
