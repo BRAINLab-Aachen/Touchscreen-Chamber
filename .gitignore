@@ -1,8 +1,14 @@
 # Ignore files from Pycharm
 /shelf/
 /workspace.xml
-**/*.pyc
 
-**/*.idea
-**/*venv
-**/*backup
+**/.idea
+**/venv
+**/backup
+**/__pycache__/*
+**/__pycache__
+
+*.pyc
+*.csv
+**/*.pyc
+**/*.csv
