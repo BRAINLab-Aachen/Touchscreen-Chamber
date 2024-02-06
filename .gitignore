@@ -9,3 +9,7 @@
 
 **/*.pyc
 **/*.csv
+**/*.mp4
+
+# Exclude this folder to not sync the large stimulus files
+**/Touchscreen-Chamber-Gerion/stimulus_files
