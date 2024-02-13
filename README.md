@@ -41,6 +41,17 @@ The water delivery system consists of a magnet ventile, a relais and the DAQ. Th
 
 The dimensions of the basis framework fits into a larger variety of clipper boxes. This is the "basic" solution. If you are running experiments, which needs a higher level of silence while they are in a not-so-quite environment, please consider the use of a proper sound attenuation box. 
 
+## Installation ##
+1. In this Project an ESP32 with a CP2102 chip is used. This requires the installation of the appropriate USB-drive:
+"https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers?tab=downloads"
+
+2. Futher the Arduino IDE is required to upload the code to the ESP32:
+"https://www.arduino.cc/en/software"
+
+3. The ESP32 Board need to be added to Arduino IDE. See instructions here: "https://randomnerdtutorials.com/installing-the-esp32-board-in-arduino-ide-windows-instructions/"
+In short: Go to "File>Preferences", then add "https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json" under “Additional Board Manager URLs”
+
+
 # Software
 
 At the moment the Touchscreen Chamber is running with Python 2.7. Since not everyone is using Python2, we suggest the following to create a dedicated environment:
