@@ -12,14 +12,14 @@
 # be built upon.
 
 from os import path, makedirs, getcwd
-from psychopy import visual, core, data, event, logging, sound, gui
-from TouchscreenChamber import TouchscreenChamber
+from psychopy import core, gui
+from modules.TouchscreenChamber import TouchscreenChamber
 
 
 class Protocol:
     def __init__(self):
         # The same that is saved with the data to make it more easily interpretable
-        self.Protocol_name = "Phase0"
+        self.Protocol_name = ""
 
         # I would currently have this as a relatively fixed/hardcoded pretraining phase
         self.Phase0 = True
@@ -27,8 +27,27 @@ class Protocol:
         # This is always true except for the very first pretraining sessions
         self.present_stimuli = False
 
+        # Currently plan on defining a fixed list with (Target-Distractor) pairs
+        self.stimulus_files = ["", ""]
+
+        # Mice tend to display side-biases (preferring one side over the other or just alteranting).
+        # Therefore, usually we include a bias-correction after Knutsen et al. (2006).
+        # But I wanted to leave the option to disable this and allow for purely random target-side determination.
+        # ToDo: This is not implemented yet, just placeholder!
+        self.use_side_bias_correction = True
+
         # the inter trial interval, added at the end of a given trial
         self.ITI = 5
+
+        # This flag rather there is a correct/incorrect side (left vs. right)
+        self.active_target_side = True
+
+        # Define parameters of stimuli to be presented
+        self.movie_stimuli = False
+        self.movie_audio_on = False
+
+        # Define the maximum number of trials in a session. Inf if not set!
+        self.maximum_number_trials = 1000
     #
 
     def load_phase0(self):
@@ -36,47 +55,80 @@ class Protocol:
         self.ITI = 5
         self.Phase0 = True
         self.present_stimuli = False
+        self.active_target_side = False
     #
 
     def load_phase1(self):
         self.Protocol_name = "Phase1"
-        self.ITI = 5
+        # There was no defined ITI in the previous script, but I think it makes sense to give the mouse time to take the
+        # reward before starting the next stimulus
+        self.ITI = 2
         self.Phase0 = False
         self.present_stimuli = True
+        self.active_target_side = False
+    #
+
+    def load_audiovisual_target_only(self):
+        # This is the first protocol I set up now that has a correct/incorrect response, with sounds associated as well as a bias-correction ...
+        self.Protocol_name = "audiovisual_target_only"
+        self.ITI = 2
+        self.Phase0 = False
+        self.present_stimuli = True
+        self.movie_stimuli = True
+        self.movie_audio_on = True
+
+        # ToDo: make these relative paths. It wasn't clear yet what the "current directory" is, when we call this from the Hallway.
+        rel_path = path.dirname(__file__)
+        # self.stimulus_files = [path.join(rel_path, r"stimulus_files\Target_fast.mp4"),
+        #                        path.join(rel_path, r"stimulus_files\Distractor_fast.mp4")]
+        self.stimulus_files = [path.join(rel_path, r"stimulus_files\Target_fast.mp4"),
+                               None]
+
+        self.use_side_bias_correction = True
+        self.active_target_side = True  # there is a correct side in this paradigm
+
+        self.maximum_number_trials = 3
+    #
+
+    def load_audiovisual_discrim(self):
+        # This is the first protocol I set up now that has a correct/incorrect response, with sounds associated as well as a bias-correction ...
+        self.Protocol_name = "audiovisual_target_only"
+        self.ITI = 2
+        self.Phase0 = False
+        self.present_stimuli = True
+        self.movie_stimuli = True
+        self.movie_audio_on = True
+
+        # ToDo: make these relative paths. It wasn't clear yet what the "current directory" is, when we call this from the Hallway.
+        rel_path = path.dirname(__file__)
+        # self.stimulus_files = [path.join(rel_path, r"stimulus_files\Target_fast.mp4"),
+        #                        path.join(rel_path, r"stimulus_files\Distractor_fast.mp4")]
+        self.stimulus_files = (path.join(rel_path, r"stimulus_files\Target_fast.mp4"),
+                               path.join(rel_path, r"stimulus_files\example50p.mp4"))
+
+        self.use_side_bias_correction = True
+        self.active_target_side = True  # there is a correct side in this paradigm
+
+        self.maximum_number_trials = 3
     #
 #
 
 
 if __name__ == "__main__":
-    experimenter_name = "GN"
-
     # I'm still on the fence how exactly I want to organize the protocols
     # a dict() would be there most flexible, but I would like to define all the arguments that are available/necessary
     # protocol = {"ITI": 5}
     current_protocol = Protocol()
     # current_protocol.load_phase0()
-    current_protocol.load_phase1()
+    # current_protocol.load_phase1()
+    current_protocol.load_audiovisual_target_only()
 
     # I could either construct the protocol on the fly (e.g.: class) or save it down completely e.g.: npy/yaml ...
     # This depends on how I decide to handle the stimulus (long list of target-/distractor-paths or just folder)
 
-
-    # This depends on the GUI we want:
-
-    # Store info about the experiment session
-    expInfo = {'animal_id': '', 'session': '001', 'experimenter_name': experimenter_name}
-    dlg = gui.DlgFromDict(dictionary=expInfo, title=current_protocol.Protocol_name)
-    if not dlg.OK:
-        core.quit()  # user pressed cancel
-    #
-    # expInfo['date'] = data.getDateStr()  # add a simple timestamp
-    # expInfo['expName'] = expName
-    # expInfo['experimenter_name'] = experimenter_name
-    #
-
-    # Well probably make this a little GUI as well
-    session = TouchscreenChamber(protocol=current_protocol, expInfo=expInfo)
+    # with the HomeCage I will get them from the call:
+    session = TouchscreenChamber(protocol=current_protocol, animal_id="test_mouse")
 
     # This now runs the session
-    session.start_session()
+    session.run_session()
 #

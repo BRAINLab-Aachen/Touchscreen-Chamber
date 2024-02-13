@@ -1,3 +1,7 @@
+# This file was originally created for the "Visuotactile Evidence accumulation task" project, by Gerion Nabbefeld.
+# We now reuse these function to realize the Serial-communication with the Tocuhscreen Chamber in the
+# autonomous TouchscreenChamber-HomeCageSystem Project. This code is released under the "CC BY-NC-SA" LICENSE.
+# Copyright 2024 by Gerion Nabbefeld, Department for Neurophysiology at RWTH Aachen University.
 import serial
 from time import time, sleep
 from serial.tools import list_ports

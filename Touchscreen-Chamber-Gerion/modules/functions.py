@@ -1,5 +1,5 @@
 import time
-from modules.Serial_functions import open_serial, send_data_until_confirmation, wait_for_signal_byte
+from modules.Serial_functions import search_for_microcontroller_by_name, send_data_until_confirmation, wait_for_signal_byte
 
 
 ADJUST_TOUCHLEVEL = 75
@@ -11,6 +11,32 @@ WAIT_FOR_LICK_NOT_REWARDED = 104
 MODULE_INFO = 255  # returns module information
 
 # valve_duration = 2  # in ms
+
+
+def initialize_microcontroller(module_name="HomecageTouchscreenESP32", valve_duration=100, testMode=False):
+    # For now, I assume that only one chamber is connected per PC. If that changes then we would need to give each
+    # Microcontroller a unique identifier and search for this specific setup.
+    # run setup without Microcontroller
+    if not testMode:
+        # If memory serves me well, this just throws an error if the module is not found and the program aborts with
+        # this as intended
+        serial_obj = search_for_microcontroller_by_name(module_name)
+
+        # This takes ~2s. In this time the mouse is not allowed to touch the Spout!
+        calibrate_lick_sensor(serial_obj)
+
+        # This line is necessary as it sets the desired valve duration for the setup!
+        give_reward(serial_obj, valve_duration=valve_duration)
+        print('ready')
+    else:
+        for _ in range(25):
+            print("WARNING! The setup is running in test mode. Only for debugging!")
+        #
+        serial_obj = None
+    #
+
+    return serial_obj
+#
 
 
 def calibrate_lick_sensor(serial_obj):
@@ -98,7 +124,7 @@ def led_off(serial_obj):
 if __name__ == "__main__":
     ADJUST_TOUCHLEVEL = 75
 
-    serial_obj = open_serial(COM_port='COM3', baudrate=9600)
+    serial_obj = initialize_microcontroller()
     send_data_until_confirmation(serial_obj, header_byte=ADJUST_TOUCHLEVEL, data=[5])
     send_data_until_confirmation(serial_obj, header_byte=LED_ON)
     print("ON")
@@ -112,5 +138,4 @@ if __name__ == "__main__":
     time.sleep(0.5)
     send_data_until_confirmation(serial_obj, header_byte=LED_OFF)
     print("OFF")
-
 #

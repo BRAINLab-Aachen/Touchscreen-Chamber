@@ -2,14 +2,18 @@
 /shelf/
 /workspace.xml
 
+# Pycharm related
 **/.idea
 **/venv
-**/backup
 **/__pycache__
 
 **/*.pyc
-**/*.csv
 **/*.mp4
+**/*.csv
+**/*.xlsx
 
 # Exclude this folder to not sync the large stimulus files
 **/Touchscreen-Chamber-Gerion/stimulus_files
+
+# I keep local backups as reference just in case
+**/backup
