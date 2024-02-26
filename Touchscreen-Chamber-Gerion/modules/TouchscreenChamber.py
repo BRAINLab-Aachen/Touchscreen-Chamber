@@ -24,6 +24,7 @@ from modules.BiasCorrection import BiasCorrection
 from modules.TouchscreenInput import TouchscreenInput
 from modules.AuditoryCue import play_auditory_cue
 from modules.GeneralStimulusClass import MovieStimuli
+from modules.Hallway_UDP import Hallway_UDP
 
 
 testMode = False
@@ -143,6 +144,7 @@ class TouchscreenChamber:
         if not testMode:
             self.serial_obj = initialize_microcontroller(module_name="HomecageTouchscreenESP32")
         #
+        self.udp_hallway = Hallway_UDP()
 
         # Initialize the stimulus.
         # Currently only the Movie as this one is the trickiest to get running well with Psychopy!
@@ -207,6 +209,8 @@ class TouchscreenChamber:
             #
 
             try:
+                self.udp_hallway.send("Still running")
+
                 # Inside a try to ensure that data will be saved even if something goes wrong
                 self.new_trial(trial_timeout=trial_timeout)
             except Exception as e:
@@ -216,6 +220,8 @@ class TouchscreenChamber:
 
         # Save all the data we have acquired during this session
         self.trial_variables.save_to_excel(self.save_file_basename + ".xlsx")
+
+        self.udp_hallway.send("Leave the chamber")
     #
 
     def new_trial(self, trial_timeout=120):
