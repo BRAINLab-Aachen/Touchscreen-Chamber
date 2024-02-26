@@ -30,7 +30,10 @@ class GeneralStimulusClass:
     def open_window(self):
         # First create the window
         # Depending on the setup we might need to make some changes here / make those settings
-        self.win = visual.Window(size=(640, 480), pos=(300, 0), fullscr=False, screen=1, allowGUI=False, allowStencil=False,
+        # self.win = visual.Window(size=(640, 480), pos=(300, 0), fullscr=False, screen=1, allowGUI=False, allowStencil=False,
+        #                          monitor='testMonitor', color=[-0.02, -0.02, -0.02], colorSpace='rgb',
+        #                          blendMode='avg', useFBO=True, multiSample=True, numSamples=16)
+        self.win = visual.Window(size=(640, 480), pos=(300, 0), fullscr=True, screen=1, allowGUI=False, allowStencil=False,
                                  monitor='testMonitor', color=[-0.02, -0.02, -0.02], colorSpace='rgb',
                                  blendMode='avg', useFBO=True, multiSample=True, numSamples=16)
         self.update()
@@ -79,7 +82,7 @@ class MovieStimuli(GeneralStimulusClass):
     #
 
     # ## MOVIE SPECIFIC FUNCTIONS ## #
-    def load_next_movie(self, target_path, distractor_path, target_side_left=True, noAudio=False, setup_scale=2):
+    def load_next_movie(self, target_path, distractor_path, target_side_left=True, noAudio=False, setup_scale=2.):
         if target_side_left:
             target_pos = -1
             distractor_pos = 1
@@ -121,7 +124,7 @@ class MovieStimuli(GeneralStimulusClass):
         # initialize_movies() has to be called first
         # file_paths: paths to the individual movies [TargetMovie, DistractorMovie]
         self.load_next_movie(target_path=file_paths[0], distractor_path=file_paths[1],
-                             target_side_left=target_side_left, noAudio=not use_Audio)
+                             target_side_left=target_side_left, noAudio=not use_Audio, setup_scale=1.2)
     #
 
     def start_stimulus(self):

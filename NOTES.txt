@@ -1,0 +1,8 @@
+- When installing the conda env we ran into the issue multiple times that it also installed a sideßpackage called "serial" which overwrites the interla "PySerial" we have to delete this packed to be able to talk to USB devices again!!!
+"C:\Users\kampaimaging\.conda\envs\TouchscreenChamber_GN\Lib\site-packages\serial"
+
+- It might be that zou then have to manually reinstall "pyserial"
+
+With the newer versions of Windows, they took the option away to disable MultiTouch! This was a nightmare and we spent hours trying this, but we couldnt make it work in the end. However what did work was that touches were still registered on the first monitor. While this is not ellegant it seems to work if we make sure that the setup Monitor has to be Monitor 1!!!!
+So change this accordingly. (Stimulus window has to be shown on Monitor 1)
+

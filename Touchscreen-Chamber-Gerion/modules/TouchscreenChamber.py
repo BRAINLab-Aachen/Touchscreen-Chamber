@@ -26,7 +26,7 @@ from modules.AuditoryCue import play_auditory_cue
 from modules.GeneralStimulusClass import MovieStimuli
 
 
-testMode = True
+testMode = False
 if testMode:
     for _ in range(125):
         print("WARNING!!! Running in Test Mode without hardware!!!")
@@ -151,7 +151,7 @@ class TouchscreenChamber:
             if self.protocol.movie_stimuli:
                 # The GeneralStimulus class opens the window now at __init__():
                 self.Stimulus = MovieStimuli()
-                self.touchscreen = TouchscreenInput(win=self.Stimulus.win)
+                self.touchscreen = TouchscreenInput(win=self.Stimulus.win, inverted_screen=self.protocol.touchscreen_inverted_screen)
             #
         #
 

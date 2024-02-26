@@ -48,6 +48,8 @@ class Protocol:
 
         # Define the maximum number of trials in a session. Inf if not set!
         self.maximum_number_trials = 1000
+
+        self.touchscreen_inverted_screen = True
     #
 
     def load_phase0(self):
