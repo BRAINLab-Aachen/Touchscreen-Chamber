@@ -49,7 +49,7 @@ class Protocol:
         # Define the maximum number of trials in a session. Inf if not set!
         self.maximum_number_trials = 1000
 
-        self.touchscreen_inverted_screen = True
+        self.touchscreen_inverted_screen = False
     #
 
     def load_phase0(self):
@@ -73,7 +73,7 @@ class Protocol:
     def load_audiovisual_target_only(self):
         # This is the first protocol I set up now that has a correct/incorrect response, with sounds associated as well as a bias-correction ...
         self.Protocol_name = "audiovisual_target_only"
-        self.ITI = 2
+        self.ITI = 4
         self.Phase0 = False
         self.present_stimuli = True
         self.movie_stimuli = True
@@ -95,7 +95,7 @@ class Protocol:
     def load_audiovisual_discrim(self):
         # This is the first protocol I set up now that has a correct/incorrect response, with sounds associated as well as a bias-correction ...
         self.Protocol_name = "audiovisual_target_only"
-        self.ITI = 2
+        self.ITI = 4
         self.Phase0 = False
         self.present_stimuli = True
         self.movie_stimuli = True

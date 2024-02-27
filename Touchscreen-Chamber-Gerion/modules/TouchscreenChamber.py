@@ -125,7 +125,8 @@ class TouchscreenChamber:
 
         # general setting:
         # ToDo: We should make this a general config for the entire setup instead even above the level of protocols!
-        self.valve_duration = 100  # in ms
+        # self.valve_duration = 100  # in ms
+        self.valve_duration = 20  # in ms
 
         # runtime variables
         self.stop_session = False
