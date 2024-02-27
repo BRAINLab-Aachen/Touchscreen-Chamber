@@ -117,19 +117,30 @@ class Protocol:
 
 
 if __name__ == "__main__":
+    import sys
+    print(sys.argv)
+
+    animal_id = sys.argv[1]
+    protocol = sys.argv[2]
+
     # I'm still on the fence how exactly I want to organize the protocols
     # a dict() would be there most flexible, but I would like to define all the arguments that are available/necessary
     # protocol = {"ITI": 5}
     current_protocol = Protocol()
-    # current_protocol.load_phase0()
-    # current_protocol.load_phase1()
-    current_protocol.load_audiovisual_target_only()
+
+    if protocol == "audiovisual_target_only":
+        # current_protocol.load_phase0()
+        # current_protocol.load_phase1()
+        current_protocol.load_audiovisual_target_only()
+    else:
+        current_protocol.load_audiovisual_target_only()
+    #
 
     # I could either construct the protocol on the fly (e.g.: class) or save it down completely e.g.: npy/yaml ...
     # This depends on how I decide to handle the stimulus (long list of target-/distractor-paths or just folder)
 
     # with the HomeCage I will get them from the call:
-    session = TouchscreenChamber(protocol=current_protocol, animal_id="test_mouse")
+    session = TouchscreenChamber(protocol=current_protocol, animal_id=animal_id)
 
     # This now runs the session
     session.run_session()

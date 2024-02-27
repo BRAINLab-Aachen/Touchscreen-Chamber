@@ -1,0 +1,9 @@
+1. Insatll Anaconda to manage the environments.
+2. Create the anaconda environment with this command:
+
+conda env create -f "C:\Users\kampaimaging\Documents\GitHub\Touchscreen-Chamber\Touchscreen-Chamber-Gerion\environment.yml"
+
+3. copy over the stimulus folder to this location:
+"GitHub\Touchscreen-Chamber\Touchscreen-Chamber-Gerion\stimulus_files"
+
+

@@ -1,1 +1,0 @@
-conda env create -f "C:\Users\kampaimaging\Documents\GitHub\Touchscreen-Chamber\Touchscreen-Chamber-Gerion\environment.yml"
