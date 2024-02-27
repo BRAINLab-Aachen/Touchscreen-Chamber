@@ -77,7 +77,7 @@ class Protocol:
         self.Phase0 = False
         self.present_stimuli = True
         self.movie_stimuli = True
-        self.movie_audio_on = True
+        self.movie_audio_on = False
 
         # ToDo: make these relative paths. It wasn't clear yet what the "current directory" is, when we call this from the Hallway.
         rel_path = path.dirname(__file__)
@@ -132,8 +132,8 @@ if __name__ == "__main__":
         # current_protocol.load_phase0()
         # current_protocol.load_phase1()
         current_protocol.load_audiovisual_target_only()
-    else:
-        current_protocol.load_audiovisual_target_only()
+    elif protocol == "audiovisual_discrim":
+        current_protocol.load_audiovisual_discrim()
     #
 
     # I could either construct the protocol on the fly (e.g.: class) or save it down completely e.g.: npy/yaml ...
