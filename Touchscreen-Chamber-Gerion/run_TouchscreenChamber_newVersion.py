@@ -10,9 +10,8 @@
 
 # In this file I want to create the new general TouchscreenChamber class that all future Experimental paradigms should
 # be built upon.
-
+import sys
 from os import path, makedirs, getcwd
-from psychopy import core, gui
 from modules.TouchscreenChamber import TouchscreenChamber
 
 
@@ -79,10 +78,8 @@ class Protocol:
         self.movie_stimuli = True
         self.movie_audio_on = False
 
-        # ToDo: make these relative paths. It wasn't clear yet what the "current directory" is, when we call this from the Hallway.
+        # use the relative path
         rel_path = path.dirname(__file__)
-        # self.stimulus_files = [path.join(rel_path, r"stimulus_files\Target_fast.mp4"),
-        #                        path.join(rel_path, r"stimulus_files\Distractor_fast.mp4")]
         self.stimulus_files = [path.join(rel_path, r"stimulus_files\Target_fast.mp4"),
                                None]
 
@@ -101,10 +98,8 @@ class Protocol:
         self.movie_stimuli = True
         self.movie_audio_on = True
 
-        # ToDo: make these relative paths. It wasn't clear yet what the "current directory" is, when we call this from the Hallway.
+        # use the relative path.
         rel_path = path.dirname(__file__)
-        # self.stimulus_files = [path.join(rel_path, r"stimulus_files\Target_fast.mp4"),
-        #                        path.join(rel_path, r"stimulus_files\Distractor_fast.mp4")]
         self.stimulus_files = (path.join(rel_path, r"stimulus_files\Target_fast.mp4"),
                                path.join(rel_path, r"stimulus_files\example50p.mp4"))
 
@@ -117,11 +112,16 @@ class Protocol:
 
 
 if __name__ == "__main__":
-    import sys
-    print(sys.argv)
-
     animal_id = sys.argv[1]
     protocol = sys.argv[2]
+
+    # try:
+    #     animal_id = sys.argv[1]
+    #     protocol = sys.argv[2]
+    # except:
+    #     animal_id = "uncomment this here"
+    #     protocol = "audiovisual_discrim"
+    # #
 
     # I'm still on the fence how exactly I want to organize the protocols
     # a dict() would be there most flexible, but I would like to define all the arguments that are available/necessary

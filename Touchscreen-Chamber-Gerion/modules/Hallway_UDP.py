@@ -3,7 +3,7 @@ import socket
 
 class Hallway_UDP:
     def __init__(self):
-        self._serverAddressPort = ("134.130.63.95", 20001)
+        self._serverAddressPort = ("127.0.0.1", 20001)
 
         # Create a UDP socket at client side
         self.udp_client = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)

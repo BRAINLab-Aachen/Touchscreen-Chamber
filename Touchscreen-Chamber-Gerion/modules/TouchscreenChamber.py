@@ -23,7 +23,7 @@ from modules.functions import (initialize_microcontroller, calibrate_lick_sensor
 from modules.BiasCorrection import BiasCorrection
 from modules.TouchscreenInput import TouchscreenInput
 from modules.AuditoryCue import play_auditory_cue
-from modules.GeneralStimulusClass import MovieStimuli
+from modules.GeneralStimulusClass import MovieStimuli, DefaultSineWaveGrating
 from modules.Hallway_UDP import Hallway_UDP
 
 
@@ -118,20 +118,19 @@ class TouchscreenChamber:
         # self.protocol.ITI = protocol.ITI  # in sec
         self.protocol = protocol
 
-        #
-
-        # ## CLASSES ## #
-        self.bias_correction = BiasCorrection()  # Initialize here. Is used to get the target_side for the next trial
 
         # general setting:
         # ToDo: We should make this a general config for the entire setup instead even above the level of protocols!
         # self.valve_duration = 100  # in ms
         self.valve_duration = 20  # in ms
 
+        #
+
+        # ## CLASSES ## #
+        self.bias_correction = BiasCorrection()  # Initialize here. Is used to get the target_side for the next trial
+
         # runtime variables
         self.stop_session = False
-        # self.touch_delay = 0
-        # self.lick_delay = 0
         self.target_side = None  # ["left", "right"]
         self.response_registered = False
         self.response_side = None
@@ -199,7 +198,51 @@ class TouchscreenChamber:
 
     def run_session(self, trial_timeout=120):
         # trial_timeout in seconds. if the animal doesn't respond in this time period the session is stopped.
+        initialization_stimulus = DefaultSineWaveGrating()
+        initialization_stimulus.start_stimulus()
 
+        # ## The mouse has to interact with the screen first to start the session ## #
+        # reset touchscreen to be able to register the next response
+
+        # Since we added the initiation stimulus, I have to reassigne the touchscreen here
+        self.touchscreen = TouchscreenInput(win=initialization_stimulus.win,
+                                            inverted_screen=self.protocol.touchscreen_inverted_screen)
+        self.touchscreen.reset()
+        initial_window_start_time = time.time()
+        while True:
+            # loop to show the sinewave stimulus until the mouse touches the screen
+            self.response_registered, self.response_side = self.touchscreen.read_touch()
+            print(self.response_registered, self.touchscreen.x)
+            if self.response_registered:
+                initialization_stimulus.stop_stimulus()
+                initialization_stimulus.close_window()
+                break
+            #
+
+            if time.time() - initial_window_start_time > trial_timeout:
+                self.stop_session = True
+                break
+            #
+            initialization_stimulus.update()
+        #
+
+        # Session has been initiated or timeout
+        if not self.stop_session:
+            if not testMode:
+                led_on(self.serial_obj)
+                # returns True if timeout is reached:
+                self.stop_session = lick_detection(self.Stimulus.win, self.serial_obj, rewarded=True)
+                led_off(self.serial_obj)
+            else:
+                time.sleep(0.5)
+            #
+        #
+
+        # ## Enter the main session loop ## #
+        # Since we added the initiation stimulus, I have to reassigne the touchscreen here
+        self.touchscreen = TouchscreenInput(win=self.Stimulus.win,
+                                            inverted_screen=self.protocol.touchscreen_inverted_screen)
+        self.touchscreen.reset()
         # overwrite the session_start_time with the time the first trial is actually started.
         self.session_start_time = time.time()
         while not self.stop_session:
@@ -237,7 +280,6 @@ class TouchscreenChamber:
 
         # reset touchscreen to be able to register the next response
         self.touchscreen.reset()
-
         if self.protocol.movie_stimuli:
             # stimulus_files: consisting of ["target_path.mp4", "distractor_path.mp4"]
             # if different stimuli are desired in different trials, to this here:
@@ -256,7 +298,7 @@ class TouchscreenChamber:
         self.trial_id += 1
         self.trial_start_time = time.time()
         self.Stimulus.start_stimulus()
-        while True:
+        while not self.stop_session:
             # check for responses
             self.response_registered, self.response_side = self.touchscreen.read_touch()
 
@@ -309,15 +351,15 @@ class TouchscreenChamber:
                 self.lick_time = time.time()
                 led_off(self.serial_obj)
             else:
+                time.sleep(0.5)
                 self.lick_time = time.time()
             #
-
-        # current trial is over now
         else:
             self.correct_response = None
             self.response_time = None
             self.lick_time = None
         #
+        # current trial is over now
 
         # Reset screen color
         self.Stimulus.win.color = [-0.02, -0.02, -0.02]

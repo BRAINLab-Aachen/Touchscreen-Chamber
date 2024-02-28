@@ -1,14 +1,12 @@
 from modules.AuditoryCue import play_auditory_cue
-from psychopy import visual, prefs
-from psychopy.constants import FINISHED
-from multiprocessing import Process
-prefs.general['audioLib'] = ['PTB']
-prefs.general['audioDevice'] = ['Built-in Output']
-from psychopy import sound
+from psychopy import visual  # , prefs
+# from psychopy.constants import FINISHED
+# from multiprocessing import Process
+# prefs.general['audioLib'] = ['PTB']
+# prefs.general['audioDevice'] = ['Built-in Output']
+# from psychopy import sound
 import numpy as np
 import time
-from os import path
-from glob import glob
 
 
 class GeneralStimulusClass:
@@ -55,6 +53,10 @@ class GeneralStimulusClass:
         # #
     #
 
+    def close_window(self):
+        self.win.close()
+    #
+
     def load_next_stimulus(self, file_paths: tuple, target_side_left: bool):
         # In this function you would set up
 
@@ -97,6 +99,7 @@ class MovieStimuli(GeneralStimulusClass):
         #     distractor_position = distractor_pos * self.distractor_stim.size[0] / 2
         # #
 
+        # NOTE: since we switched to VlcMovieStim can no longer change the volume
         self.target_stim = visual.VlcMovieStim(self.win, target_path, size=(500 / setup_scale, 500 / setup_scale),
                                                pos=(0, 0), noAudio=noAudio, opacity=1., loop=True, autoStart=False)
         if distractor_path is not None:
@@ -155,11 +158,10 @@ class MovieStimuli(GeneralStimulusClass):
 class DefaultSineWaveGrating(GeneralStimulusClass):
     def __init__(self):
         super().__init__()
-        self.frameN = -1
-
+        self.load_next_stimulus()
     #
 
-    def load_next_stimulus(self, file_paths):
+    def load_next_stimulus(self, file_paths=None, target_side_left=None):
         # for the default image the "file_paths" is ignored
         self.target_stim = visual.GratingStim(win=self.win, name='grating',
                                               tex=u'sin', mask=None,
@@ -170,13 +172,6 @@ class DefaultSineWaveGrating(GeneralStimulusClass):
 
     def start_stimulus(self):
         self.target_stim.setAutoDraw(True)
-        if 0:
-            # ToDo: This is a placeholder for now
-            # keep track of start time/frame for later
-            t = self.trialClock.getTime()
-            self.target_stim.tStart = t  # underestimates by a little under one frame
-            self.target_stim.frameNStart = self.frameN  # exact frame index
-        #
     #
 
     def stop_stimulus(self):
@@ -192,7 +187,7 @@ if __name__ == "__main__":
     target_side = 'left'
     if 0:
         stim = GeneralStimulusClass()
-    elif 0:
+    elif 1:
         stim = DefaultSineWaveGrating()
     else:
         rel_path = path.dirname(__file__)
